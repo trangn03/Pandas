@@ -276,6 +276,100 @@ df = df.rename(columns={'Fare': 'TicketPrice'})
 
 ---
 
+## Step 7: Working with Strings
+
+Pandas has powerful built-in text processing tools accessed via `.str`.
+
+```python
+df['Name'].str.lower()                           # lowercase all text
+df['Name'].str.contains('Mr\.')                  # boolean mask: does it contain 'Mr.'?
+df['Name'].str.split(',', expand=True)           # split string into multiple columns
+```
+
+### Exercises — Step 7
+1. Filter the dataset to show only passengers whose name contains "Miss.".
+2. Create a new column `LastName` by splitting `Name` on `,` and keeping the first part.
+
+<details>
+<summary>Solutions — Step 7</summary>
+
+```python
+# 1
+print(df[df['Name'].str.contains('Miss.')])
+
+# 2
+df['LastName'] = df['Name'].str.split(',').str[0]
+```
+</details>
+
+---
+
+## Step 8: Applying Custom Functions
+
+Sometimes built-in methods aren't enough, and you need to run your own custom logic on a column. `apply()` lets you apply a function to every value in a column.
+
+```python
+# Create a simple function
+def categorize_fare(fare):
+    if pd.isna(fare): return 'Unknown'
+    if fare < 10: return 'Cheap'
+    elif fare < 50: return 'Medium'
+    else: return 'Expensive'
+
+# Apply the function to a column
+df['FareCategory'] = df['Fare'].apply(categorize_fare)
+
+# Apply using a lambda (one-liner anonymous function)
+df['FareRounded'] = df['Fare'].apply(lambda x: round(x) if pd.notna(x) else x)
+```
+
+### Exercises — Step 8
+1. Write a function that takes an age and returns 'Adult' if age >= 18, and 'Minor' if age < 18.
+2. Use `.apply()` to create a new column `AgeGroup` using your function.
+
+<details>
+<summary>Solutions — Step 8</summary>
+
+```python
+# 1
+def get_age_group(age):
+    if pd.isna(age): return 'Unknown'
+    if age >= 18: return 'Adult'
+    return 'Minor'
+
+# 2
+df['AgeGroup'] = df['Age'].apply(get_age_group)
+```
+</details>
+
+---
+
+## Step 9: Saving Data
+
+Once you've cleaned and transformed your data, you'll want to save it so you don't have to repeat the process.
+
+```python
+# Save to CSV (index=False prevents Pandas from saving the row numbers as a new column)
+df.to_csv('titanic_cleaned.csv', index=False)
+
+# Save to Excel
+df.to_excel('titanic_cleaned.xlsx', index=False)
+```
+
+### Exercises — Step 9
+1. Save your current DataFrame to a new file called `my_titanic_analysis.csv` without saving the index.
+
+<details>
+<summary>Solutions — Step 9</summary>
+
+```python
+# 1
+df.to_csv('my_titanic_analysis.csv', index=False)
+```
+</details>
+
+---
+
 ## Final Challenge — Put it all together
 
 Using only what's above:
